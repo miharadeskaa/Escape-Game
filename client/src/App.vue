@@ -105,7 +105,7 @@
       <div class="col-span-12 sm:col-span-8 flex flex-col items-center justify-center text-center space-y-1 min-w-0">
         <div class="flex items-center justify-center gap-2 font-mono text-xs font-extrabold uppercase tracking-[0.3em] text-[#852c1e]">
           <span>𓇯</span>
-          <span>10 Suspects // 15 Indices Choisis sur 20</span>
+          <span>10 Suspects // 15 Indices Thématiques Répartis</span>
           <span>𓇯</span>
         </div>
         
@@ -149,7 +149,7 @@
           <div class="w-8 h-8 rounded-full bg-[#2b5921] text-[#faebd7] flex items-center justify-center font-mono font-bold text-sm shadow-xs">1</div>
           <h3 class="font-bold text-base uppercase text-[#2b1b11]">Niveau Facile</h3>
           <p class="text-sm text-[#523d2b] leading-relaxed">
-            Parmi les 15 indices sélectionnés sur les 20, un <strong class="text-[#852c1e]">indice décisif évident</strong> est obligatoirement présent (ex: sceau nominal, initiales brodées, etc.).
+            Parmi les 15 éléments déterrés, un <strong class="text-[#852c1e]">indice décisif évident</strong> est garanti d'apparaître, désignant sans équivoque le suspect coupable.
           </p>
         </div>
 
@@ -157,7 +157,7 @@
           <div class="w-8 h-8 rounded-full bg-[#7a4b22] text-[#faebd7] flex items-center justify-center font-mono font-bold text-sm shadow-xs">2</div>
           <h3 class="font-bold text-base uppercase text-[#2b1b11]">Niveau Moyen</h3>
           <p class="text-sm text-[#523d2b] leading-relaxed">
-            L'indice flagrant a <strong>50% de chances</strong> d'avoir été écarté. Si vous ne le trouvez pas, il faudra croiser les emplois du temps et les alibis des 10 suspects.
+            L'indice évident n'a que <strong>50% de chances</strong> d'apparaître sur les fouilles. Si vous ne le trouvez pas, basez votre verdict sur la contradiction entre les déclarations et les objets.
           </p>
         </div>
 
@@ -165,7 +165,7 @@
           <div class="w-8 h-8 rounded-full bg-[#852c1e] text-[#faebd7] flex items-center justify-center font-mono font-bold text-sm shadow-xs">3</div>
           <h3 class="font-bold text-base uppercase text-[#2b1b11]">Niveau Difficile</h3>
           <p class="text-sm text-[#523d2b] leading-relaxed">
-            L'indice évident est <strong>systématiquement exclu</strong> des 15 fouilles. La résolution repose uniquement sur la contradiction logique d'un faux alibi.
+            Aucun indice évident n'est présent. Vous devez identifier le mensonge dans l'alibi du coupable et le confronter directement à l'arme réelle du crime.
           </p>
         </div>
       </div>
@@ -200,7 +200,7 @@
           </div>
         </div>
 
-        <!-- Fiches des 10 Suspects (Mélangés à chaque partie) -->
+        <!-- Fiches des 10 Suspects (Mélangés à chaque nouvelle partie) -->
         <div class="bg-[#faebd7] border border-[#bfa07a] rounded-md p-3 flex-1 flex flex-col min-h-0 shadow-xs">
           <div class="h-7 border-b border-[#bfa07a]/40 pb-1.5 mb-2 flex items-center justify-between font-mono shrink-0">
             <span class="text-xs font-extrabold uppercase tracking-wider text-[#734b26] flex items-center gap-1.5">
@@ -252,7 +252,7 @@
           
           <div class="relative w-full h-full max-w-full max-h-full aspect-video flex items-center justify-center">
             
-            <!-- Image intacte, sans étirement ni rognage -->
+            <!-- Image du lieu intacte, sans distorsion -->
             <img
               v-if="activeRoom?.image"
               :src="activeRoom.image"
@@ -260,7 +260,7 @@
               class="w-full h-full object-contain pointer-events-none select-none brightness-95 contrast-105 rounded"
             />
 
-            <!-- Ornements hiéroglyphiques -->
+            <!-- Ornements d'angle -->
             <div class="absolute top-2 right-2 text-xs text-[#ffd97d]/70 font-mono tracking-widest select-none pointer-events-none drop-shadow z-10">𓃭 𓃮 𓃯</div>
             <div class="absolute bottom-2 left-2 text-xs text-[#ffd97d]/70 font-mono tracking-widest select-none pointer-events-none drop-shadow z-10">𓄿 𓅀 𓅁</div>
 
@@ -270,12 +270,12 @@
               <span>Lieu : {{ activeRoom ? activeRoom.name : 'Manoir' }}</span>
             </div>
 
-            <!-- Glyphes dorés collés aux éléments dessinés -->
+            <!-- Glyphes dorés collés aux éléments cliquables -->
             <template v-if="activeRoom && activeRoom.hotspots">
               <button
                 v-for="spot in activeRoom.hotspots"
                 :key="spot.id"
-                @click="game.inspectSpot(spot)"
+                @click="game.inspectSpot(spot, activeRoom.name)"
                 :style="{ left: `${spot.x}%`, top: `${spot.y}%`, position: 'absolute' }"
                 class="group -translate-x-1/2 -translate-y-1/2 cursor-pointer focus:outline-none z-10"
               >
@@ -311,7 +311,7 @@
       <!-- ================= COLONNE DROITE (15 INDICES & VERDICT) ================= -->
       <aside class="col-span-3 flex flex-col gap-2.5 min-h-0">
         
-        <!-- Fiches des 15 Indices (Texte agrandi) -->
+        <!-- Fiches des 15 Indices (Avec nom de salle d'origine) -->
         <div class="bg-[#faebd7] border border-[#bfa07a] rounded-md p-3 flex-1 flex flex-col min-h-0 shadow-xs">
           <div class="h-7 border-b border-[#bfa07a]/40 pb-1.5 mb-2 flex items-center justify-between font-mono shrink-0">
             <span class="text-xs font-extrabold uppercase tracking-wider text-[#734b26] flex items-center gap-1.5">
@@ -349,7 +349,14 @@
                   #AR-{{ String(idx + 1).padStart(2, '0') }}
                 </span>
               </div>
-              <p class="text-xs text-[#523d2b] mt-1.5 leading-relaxed italic line-clamp-2">
+              
+              <!-- Badge de provenance du lieu -->
+              <div class="mt-1 flex items-center gap-1 text-[10px] font-mono text-[#8c673d]">
+                <span>📍</span>
+                <span class="uppercase tracking-wider font-semibold">{{ clue.roomName }}</span>
+              </div>
+
+              <p class="text-xs text-[#523d2b] mt-1 leading-relaxed italic line-clamp-2">
                 {{ clue.description }}
               </p>
             </div>
@@ -476,7 +483,7 @@ const currentTab = ref<'investigation' | 'rules'>('investigation');
 const isLoadModalOpen = ref(false);
 const saveNotice = ref(false);
 
-// Les 10 suspects avec leurs pièces maîtresses évidentes potentielles
+// Répertoire des 10 suspects avec leurs preuves directes potentielles
 const BASE_SUSPECTS = [
   { id: 'suspect-1', name: 'Victor Vance', role: 'Le Majordome', alibi: '« J’étais au sous-sol à inventorier l’argenterie de 16h à 18h. »', avatar: '🍷', dialogue: 'Lord Blackwood était intraitable, mais c’était mon bienfaiteur depuis trente ans.', smokingGun: 'Un passe-partout frappé aux initiales V.V. maculé de curare' },
   { id: 'suspect-2', name: 'Éléonore Blackwood', role: 'L’Héritière', alibi: '« Je consultais les archives familiales dans la bibliothèque. »', avatar: '💍', dialogue: 'Mon père voulait léguer sa collection au musée plutôt qu’à ses propres enfants.', smokingGun: 'Une broche en perles signée de la fille du Lord tombée près du poison' },
@@ -490,37 +497,81 @@ const BASE_SUSPECTS = [
   { id: 'suspect-10', name: 'Sébastien Vane', role: 'Le Notaire', alibi: '« Je rédigeais un codicille dans le bureau annexe du rez-de-chaussée. »', avatar: '⚖️', dialogue: 'Lord Blackwood devait signer le désaveu total de ses associés ce soir même.', smokingGun: 'Le sceau en cire rouge officiel du notaire Vane scellant l’accusation' }
 ];
 
-// Catalogue des 20 indices possibles
-const POOL_OF_20_CLUES = [
-  // 1. Arme potentielle A
-  { id: 'pool-pot', name: 'Théière en argent du banquet', description: 'Le fond de la verseuse dégage une forte odeur d’amande amère.', icon: '🫖', log: 'La théière du banquet présente un dépôt visqueux autour du bec verseur !', isWeapon: true },
-  // 2. Arme potentielle B
-  { id: 'pool-digitalis', name: 'Tiges de digitale coupées', description: 'Des massifs dont les fleurs vénéneuses ont été cueillies aujourd’hui.', icon: '🌿', log: 'Une récolte récente de digitale pourpre servant à synthétiser un arrêt cardiaque.', isWeapon: true },
-  // 3. Arme potentielle C
-  { id: 'pool-curare', name: 'Fiole de curare dissimulée', description: 'Flacon de laboratoire scellé contenant un extrait concentré paralysant.', icon: '🧪', log: 'Une fiole médicale de curare presque vide dissimulée dans les recoins !', isWeapon: true },
-  // 4. Arme potentielle D
-  { id: 'pool-secateur', name: 'Sécateur et sève toxique', description: 'Outil de taille imprégné de sève végétale laiteuse fraîchement extraite.', icon: '🧤', log: 'Le sécateur porte encore des traces fraîches de broyage végétal.', isWeapon: true },
-  
-  // 5 à 19 : Indices d'ambiance et déductions logiques
-  { id: 'pool-letter', name: 'Lettre de dénonciation inachevée', description: 'Accusations écrites de la main du Lord visant un complot.', icon: '✉️', log: 'Sur le sous-main, Lord Blackwood dénonçait une trahison imminente.' },
-  { id: 'pool-safe', name: 'Coffre secret fracturé', description: 'Le compartiment secret a été vidé de son codicille récent.', icon: '🖼️', log: 'Le panneau coulissant du tableau cache un coffre dévalisé sans effraction violente.' },
-  { id: 'pool-ashes', name: 'Fragments de papier brûlé', description: 'Résidus de parchemin juridique noircis par le foyer.', icon: '📜', log: 'Des fragments de papier calciné portent des traces d’une modification testamentaire.' },
-  { id: 'pool-linen', name: 'Mouchoir de lin taché', description: 'Tissu fin portant des résidus jaunâtres et de la cendre.', icon: '🧣', log: 'Un linge abandonné à la hâte dégageant une faible odeur d’alcaloïde.' },
-  { id: 'pool-book', name: 'Manuel de toxicologie nubienne', description: 'Ouvrage ancien ouvert au chapitre des poisons fulgurants.', icon: '📖', log: 'Le grimoire porte des traces de doigts humides à la page des extraits de digitale.' },
-  { id: 'pool-cufflink', name: 'Bouton de manchette scarabée', description: 'Bijou en or massif égaré lors d’une vive altercation.', icon: '🪲', log: 'Un bouton de manchette de grande valeur coincé sous un fauteuil.' },
-  { id: 'pool-chalk', name: 'Bâton de craie d’archiviste', description: 'Craie blanche utilisée pour décalquer les stèles.', icon: '🖍️', log: 'Des dépôts de craie fraîche révèlent une escalade rapide des échelles.' },
-  { id: 'pool-hair', name: 'Mèche de cheveux blonds', description: 'Fibres capillaires arrachées dans les coussins du divan.', icon: '💇', log: 'Des cheveux fins attestant d’un corps-à-corps précipité avant le repas.' },
-  { id: 'pool-pipe', name: 'Fourneau de pipe tiède', description: 'Cendres de tabac oriental mélangées à un narcotique.', icon: '🪵', log: 'La pipe dégage une odeur anormale de pavot et d’épices somnifères.' },
-  { id: 'pool-curtain', name: 'Tenture en velours froissée', description: 'Le rideau lourd garde l’empreinte d’un témoin caché.', icon: '🗝️', log: 'Derrière le rideau lourd, le plancher ciré porte des traces de pas récentes.' },
-  { id: 'pool-crate', name: 'Statuette d’Anubis emballée', description: 'Antiquité nubienne enveloppée dans de la paille d’expédition.', icon: '🏺', log: 'La précieuse statuette attendait d’être subtilisée à la faveur du chaos.' },
-  { id: 'pool-clock', name: 'Montre à gousset brisée', description: 'Arrêtée net à 16h42 lors d’un choc violent.', icon: '⏱️', log: 'Le cadran fêlé fige l’heure exacte d’une altercation fatale.' },
-  { id: 'pool-cup', name: 'Tasse de thé froide', description: 'Résidus amers au fond d’une fine porcelaine anglaise.', icon: '☕', log: 'Une tasse abandonnée au tiers bue portant un cercle blanc suspect.' },
-  { id: 'pool-gloves', name: 'Gants de cuir imprégnés', description: 'Gants de protection tachés de sécrétions noirâtres.', icon: '🧤', log: 'Des gants souillés jetés rapidement pour masquer toute manipulation.' },
-  { id: 'pool-vial', name: 'Verre de laboratoire brisé', description: 'Débris d’éprouvette écrasée au sol.', icon: '🍶', log: 'Des tessons de verre fin encore humides d’une solution non identifiée.' },
+// Catalogue des variantes contextuelles par point de fouille (100% cohérent avec chaque meuble)
+const SPOT_CLUE_VARIANTS: Record<string, Array<{ id: string; name: string; description: string; icon: string; log: string; isWeapon?: boolean }>> = {
+  // Bureau du Lord
+  'spot-1': [
+    { id: 'clue-desk-1', name: 'Sous-main et lettre inachevée', description: 'Une lettre dénonçant un vol de reliques royales.', icon: '✉️', log: 'Sur le sous-main, Lord Blackwood dénonçait un complot avant de mourir.' },
+    { id: 'clue-desk-2', name: 'Montre à gousset brisée', description: 'Arrêtée net à 16h42 lors d’un choc violent sur le bois.', icon: '⏱️', log: 'Sur le sous-main, la montre brisée fige l’heure exacte de l’agression.' },
+    { id: 'clue-desk-3', name: 'Buvard taché d’encre violette', description: 'Traces d’une signature forcée sous la contrainte.', icon: '🖋️', log: 'Le buvard garde l’empreinte d’un document signé dans la panique.' }
+  ],
+  'spot-2': [
+    { id: 'clue-safe-1', name: 'Coffre derrière le tableau forcé', description: 'Vidé de ses obligations et de ses diamants bruts.', icon: '🖼️', log: 'Derrière la toile, le compartiment blindé a été vidé sans fracturation.' },
+    { id: 'clue-safe-2', name: 'Double fond entrouvert', description: 'Un registre secret répertoriant les dettes des convives.', icon: '📓', log: 'Dans le panneau secret du tableau, un carnet intime compromettant.' }
+  ],
+  'spot-3': [
+    { id: 'clue-ashes-1', name: 'Cendres de testament juridique', description: 'Fragments d’un acte d’héritage noircis par le feu.', icon: '📜', log: 'Au fond de l’âtre, des morceaux de parchemin notarié ont réchappé aux flammes.' },
+    { id: 'clue-ashes-2', name: 'Gant en cuir partiellement calciné', description: 'Gant fin abandonné à la hâte dans le foyer.', icon: '🧤', log: 'Dans les braises froides, un gant de soirée à moitié consumé.' }
+  ],
 
-  // 20. L'Indice évident dynamique (sera remplacé par la pièce à conviction du coupable)
-  { id: 'pool-smoking-gun', name: 'Pièce à conviction irréfutable', description: 'Un élément personnel accusant directement l’auteur du crime.', icon: '🔍', log: 'Preuve flagrante qui ne laisse plus aucun doute sur l’identité du coupable !' }
-];
+  // Office & Réserves
+  'spot-4': [
+    { id: 'clue-linen-1', name: 'Armoire et mouchoir taché', description: 'Un linge de service imprégné de traces jaunâtres suspectes.', icon: '🧣', log: 'Dans l’armoire à linge, un mouchoir a été dissimulé à la hâte parmi les draps.' },
+    { id: 'clue-linen-2', name: 'Tablier souillé de poudre blanche', description: 'Résidus d’alcaloïde dissimulés sous les serviettes propres.', icon: '🥼', log: 'Caché au fond de l’armoire, un tablier imprégné de produit chimique.' }
+  ],
+  'spot-5': [
+    { id: 'clue-pot-1', name: 'Théière en argent du banquet', description: 'Le bec verseur dégage une forte odeur d’amande amère.', icon: '🫖', log: 'La théière du banquet présente un résidu visqueux toxique !', isWeapon: true },
+    { id: 'clue-pot-2', name: 'Tasse de porcelaine fêlée', description: 'Fond de tisane amère contenant une concentration anormale.', icon: '☕', log: 'Sur le plateau d’argent, une tasse abandonnée dégage une odeur âcre.', isWeapon: true }
+  ],
+
+  // Bibliothèque
+  'spot-6': [
+    { id: 'clue-book-1', name: 'Traité de toxicologie nubienne', description: 'Ouvrage ouvert au chapitre des poisons paralysants.', icon: '📖', log: 'Sur le rayonnage, ce manuel ancien a été feuilleté avec des mains poussiéreuses.' },
+    { id: 'clue-book-2', name: 'Livre évidé de contrebande', description: 'Un faux dictionnaire servant de cachette pour flacons.', icon: '📕', log: 'Entre deux reliures, un livre creux portant la marque circulaire d’une fiole.' }
+  ],
+  'spot-7': [
+    { id: 'clue-cufflink-1', name: 'Bouton de manchette scarabée', description: 'Bijou en or massif égaré entre deux coussins capitonnés.', icon: '🪲', log: 'Glissé entre les plis du fauteuil en cuir, ce bijou appartient à un invité.' },
+    { id: 'clue-cufflink-2', name: 'Éventail en soie déchiré', description: 'Soie fine ornée de perles arrachée lors d’une querelle.', icon: '🪭', log: 'Coincé contre le dossier du fauteuil, un éventail abandonné sous le coup de l’émotion.' }
+  ],
+  'spot-8': [
+    { id: 'clue-chalk-1', name: 'Marques de craie sur l’échelle', description: 'Craie blanche utilisée par les traducteurs d’hiéroglyphes.', icon: '🖍️', log: 'Des traces de craie fraîche souillent les montants en bois de l’échelle.' },
+    { id: 'clue-chalk-2', name: 'Papyrus déchiré au pied de l’échelle', description: 'Feuille antique froissée lors d’une précipitation.', icon: '📜', log: 'Au pied des marches de l’échelle, un extrait de papyrus piétiné.' }
+  ],
+
+  // Serre Botanique
+  'spot-9': [
+    { id: 'clue-digitalis-1', name: 'Pieds de digitale fraîchement coupés', description: 'Tiges de fleurs toxiques sectionnées aujourd’hui même.', icon: '🌿', log: 'Une coupe fraîche de digitale pourpre dont le suc provoque l’arrêt cardiaque.', isWeapon: true },
+    { id: 'clue-digitalis-2', name: 'Baies de belladone écrasées', description: 'Graines hautement vénéneuses pillées dans les bacs.', icon: '🫐', log: 'Des baies de belladone fraîchement broyées sur les dalles de pierre.', isWeapon: true }
+  ],
+  'spot-10': [
+    { id: 'clue-secateur-1', name: 'Sécateur maculé de sève', description: 'Outil de coupe portant un suc laiteux irritant.', icon: '🧤', log: 'Sur la table de rempotage, le sécateur est encore poisseux d’extrait végétal.', isWeapon: true },
+    { id: 'clue-secateur-2', name: 'Mortier de botaniste pilé', description: 'Bol de broyage en pierre contenant une pâte d’herbes amères.', icon: '🥣', log: 'Sur l’établi de la serre, un pilon encore humide de sève toxique.', isWeapon: true }
+  ],
+
+  // Fumoir Privé
+  'spot-11': [
+    { id: 'clue-hair-1', name: 'Mèche de cheveux blonds', description: 'Fibres capillaires arrachées lors d’une querelle sur le sofa.', icon: '💇', log: 'Sur les coussins du divan, quelques mèches attestent d’une lutte discrète.' },
+    { id: 'clue-hair-2', name: 'Mouchoir en soie parfumé', description: 'Tissu imprégné d’une eau de Cologne d’importation.', icon: '🧣', log: 'Glissé sous un coussin, un mouchoir imprégné d’un parfum identifiable.' }
+  ],
+  'spot-12': [
+    { id: 'clue-pipe-1', name: 'Cendrier et pipe encore tiède', description: 'Tabac oriental mélangé à des graines somnifères.', icon: '🪵', log: 'Sur la table basse, la pipe dégage une odeur anormale de pavot et d’épices.' },
+    { id: 'clue-pipe-2', name: 'Étui à cigarettes monogrammé', description: 'Étui en argent gravé oublié près du verre de digestif.', icon: '🚬', log: 'Sur la table basse, cet étui luxueux appartient à l’un des convives.' }
+  ],
+  'spot-13': [
+    { id: 'clue-curtain-1', name: 'Tenture froissée et traces de cire', description: 'La draperie porte l’empreinte d’un témoin caché.', icon: '🗝️', log: 'Derrière le rideau lourd, des gouttes de cire de bougie fraîche au sol.' },
+    { id: 'clue-curtain-2', name: 'Bouton de veste arraché', description: 'Bouton en corne noire tombé derrière la draperie.', icon: '🔘', log: 'Au pied du rideau, ce bouton a sauté lors d’une altercation précipitée.' }
+  ],
+
+  // Cave à Vin & Crypte
+  'spot-14': [
+    { id: 'clue-curare-1', name: 'Fiole de curare dissimulée', description: 'Flacon médical en verre ambré presque vidé de sa dose mortelle.', icon: '🧪', log: 'Cachée derrière un fût de chêne, une fiole de curare foudroyant !', isWeapon: true },
+    { id: 'clue-curare-2', name: 'Bouteille de grand cru frelatée', description: 'Le goulot en cire a été percé à la seringue.', icon: '🍾', log: 'Parmi les fûts, une bouteille dont le bouchon a été discrètement altéré.', isWeapon: true }
+  ],
+  'spot-15': [
+    { id: 'clue-crate-1', name: 'Statuette d’Anubis emballée', description: 'Antiquité nubienne enfouie sous de la paille d’expédition.', icon: '🏺', log: 'Dans les caisses d’expédition, la statuette dorée attendait son receleur.' },
+    { id: 'clue-crate-2', name: 'Pied-de-biche d’archéologue', description: 'Barre de fer ayant servi à desceller les sarcophages.', icon: '⛏️', log: 'Posé sur une caisse de transport, un outil de cambriolage encore poussiéreux.' }
+  ]
+};
 
 const game = reactive({
   caseInfo: {
@@ -610,62 +661,50 @@ const game = reactive({
     // 1. Mélange aléatoire des 10 suspects
     this.suspects = [...BASE_SUSPECTS].sort(() => Math.random() - 0.5);
 
-    // 2. Choix d'un coupable secret
+    // 2. Tirage d'un nouveau coupable
     const culprit = this.suspects[Math.floor(Math.random() * this.suspects.length)];
     this.culpritId = culprit.id;
 
-    // 3. Personnalisation de l'indice évident n°20 pour ce coupable
-    const smokingGunClue = {
-      id: 'pool-smoking-gun',
-      name: `Preuve accablante (${culprit.name.split(' ')[0]})`,
-      description: `${culprit.smokingGun}.`,
-      icon: '🔎',
-      log: `Élément décisif : vous découvrez ${culprit.smokingGun.toLowerCase()} !`,
-      isWeapon: true
-    };
+    // 3. Tirage contextuel d'un indice par spot parmi ses variantes dédiées
+    this.spotClueMapping = {};
+    const weaponCandidates: string[] = [];
 
-    // 4. Choix de l'arme du crime parmi les armes potentielles
-    const weapons = POOL_OF_20_CLUES.filter(c => c.isWeapon && c.id !== 'pool-smoking-gun');
-    const chosenWeapon = weapons[Math.floor(Math.random() * weapons.length)];
-    this.murderWeaponId = chosenWeapon.id;
+    Object.keys(SPOT_CLUE_VARIANTS).forEach(spotId => {
+      const variants = SPOT_CLUE_VARIANTS[spotId];
+      const chosenClue = variants[Math.floor(Math.random() * variants.length)];
+      this.spotClueMapping[spotId] = { ...chosenClue };
 
-    // 5. Préparation des 20 indices
-    let pool = POOL_OF_20_CLUES.map(c => c.id === 'pool-smoking-gun' ? smokingGunClue : c);
-
-    // 6. Filtrage selon la difficulté pour sélectionner EXACTEMENT 15 indices sur 20
-    let selected15: any[] = [];
-    
-    if (this.difficulty === 'easy') {
-      // FACILE : L'indice évident fait OBLIGATOIREMENT partie des 15
-      const poolWithoutGun = pool.filter(c => c.id !== 'pool-smoking-gun').sort(() => Math.random() - 0.5);
-      selected15 = [smokingGunClue, chosenWeapon, ...poolWithoutGun.filter(c => c.id !== chosenWeapon.id).slice(0, 13)];
-    } else if (this.difficulty === 'medium') {
-      // MOYEN : 50% de chance d'inclure l'indice évident
-      const includeGun = Math.random() > 0.5;
-      if (includeGun) {
-        const rest = pool.filter(c => c.id !== 'pool-smoking-gun' && c.id !== chosenWeapon.id).sort(() => Math.random() - 0.5);
-        selected15 = [smokingGunClue, chosenWeapon, ...rest.slice(0, 13)];
-      } else {
-        const poolNoGun = pool.filter(c => c.id !== 'pool-smoking-gun').sort(() => Math.random() - 0.5);
-        selected15 = [chosenWeapon, ...poolNoGun.filter(c => c.id !== chosenWeapon.id).slice(0, 14)];
+      if (chosenClue.isWeapon) {
+        weaponCandidates.push(chosenClue.id);
       }
+    });
+
+    // 4. Choix de l'arme du crime parmi les armes actives
+    this.murderWeaponId = weaponCandidates[Math.floor(Math.random() * weaponCandidates.length)];
+
+    // 5. Gestion de l'indice évident (Smoking Gun) selon le niveau de difficulté
+    let placeSmokingGun = false;
+    if (this.difficulty === 'easy') {
+      placeSmokingGun = true; // Garanti en facile
+    } else if (this.difficulty === 'medium') {
+      placeSmokingGun = Math.random() > 0.5; // 50% de chances en moyen
     } else {
-      // DIFFICILE : L'indice évident est EXCLU (parmi les 5 écartés)
-      const poolNoGun = pool.filter(c => c.id !== 'pool-smoking-gun').sort(() => Math.random() - 0.5);
-      selected15 = [chosenWeapon, ...poolNoGun.filter(c => c.id !== chosenWeapon.id).slice(0, 14)];
+      placeSmokingGun = false; // Exclu en difficile
     }
 
-    // Mélanger les 15 retenus
-    selected15 = selected15.sort(() => Math.random() - 0.5);
-
-    // 7. Affecter les 15 indices aux 15 points de fouille des 6 pièces
-    const allSpots: string[] = [];
-    this.rooms.forEach(r => r.hotspots.forEach(h => allSpots.push(h.id)));
-
-    this.spotClueMapping = {};
-    allSpots.forEach((spotId, idx) => {
-      this.spotClueMapping[spotId] = selected15[idx];
-    });
+    if (placeSmokingGun) {
+      // On place l'élément évident sur un spot secondaire sans écraser l'arme du crime
+      const candidateSpots = ['spot-1', 'spot-7', 'spot-11', 'spot-13'];
+      const chosenSpot = candidateSpots[Math.floor(Math.random() * candidateSpots.length)];
+      
+      this.spotClueMapping[chosenSpot] = {
+        id: 'smoking-gun',
+        name: `Preuve accablante (${culprit.name.split(' ')[0]})`,
+        description: `${culprit.smokingGun}.`,
+        icon: '🔎',
+        log: `Élément décisif : vous découvrez ${culprit.smokingGun.toLowerCase()} !`
+      };
+    }
   },
 
   init() {
@@ -675,7 +714,7 @@ const game = reactive({
     }
   },
 
-  inspectSpot(spot: { id: string; name: string }) {
+  inspectSpot(spot: { id: string; name: string }, roomName: string) {
     this.searchedSpots.add(spot.id);
     const data = this.spotClueMapping[spot.id];
     
@@ -687,7 +726,7 @@ const game = reactive({
           name: data.name,
           description: data.description,
           icon: data.icon,
-          isWeapon: data.isWeapon
+          roomName: roomName
         });
         this.selectedClueId = data.id;
       }
@@ -696,11 +735,9 @@ const game = reactive({
 
   submitAccusation() {
     if (!this.selectedSuspectId || !this.selectedClueId) return;
-    
+
     const isRightCulprit = this.selectedSuspectId === this.culpritId;
-    // Valable si le joueur désigne soit l'arme du crime, soit la preuve irréfutable
-    const isRightWeapon = this.selectedClueId === this.murderWeaponId || this.selectedClueId === 'pool-smoking-gun';
-    
+    const isRightWeapon = this.selectedClueId === this.murderWeaponId || this.selectedClueId === 'smoking-gun';
     const suspectObj = this.suspects.find(s => s.id === this.selectedSuspectId);
     const clueObj = this.discoveredClues.find(c => c.id === this.selectedClueId);
 
@@ -712,7 +749,7 @@ const game = reactive({
     } else if (isRightCulprit) {
       this.verdict = {
         solved: false,
-        message: `Vous tenez le bon suspect en la personne de ${suspectObj?.name}, mais l'élément présenté ne constitue pas une preuve suffisante pour emporter la condamnation !`
+        message: `Vous tenez le bon suspect en la personne de ${suspectObj?.name}, mais l'élément présenté ne constitue pas la preuve matérielle du crime !`
       };
     } else {
       this.verdict = {
